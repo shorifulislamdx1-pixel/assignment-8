@@ -1,26 +1,261 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --canvas: #0b1711;
+  --surface: #14231a;
+  --surface-muted: #1b2d22;
+  --ink: #f1f5ef;
+  --muted: #9baa9f;
+  --line: #293b30;
+
+  --brand: #91cba5;
+  --brand-strong: #a7dbb8;
+  --brand-foreground: #102117;
+  --brand-soft: #1b3525;
+  --brand-soft-strong: #294b35;
+
+  --gold: #e0b46f;
+  --gold-soft: #382e1b;
+  --danger: #f18b83;
+  --danger-soft: #3a1e1e;
+
+  --header: rgb(11 23 17 / 88%);
+  --shadow: 0 0 0;
+}
+
+.dark {
+  --canvas: #0b1711;
+  --surface: #14231a;
+  --surface-muted: #1b2d22;
+  --ink: #f1f5ef;
+  --muted: #9baa9f;
+  --line: #293b30;
+
+  --brand: #91cba5;
+  --brand-strong: #a7dbb8;
+  --brand-foreground: #102117;
+  --brand-soft: #1b3525;
+  --brand-soft-strong: #294b35;
+
+  --gold: #e0b46f;
+  --gold-soft: #382e1b;
+  --danger: #f18b83;
+  --danger-soft: #3a1e1e;
+
+  --header: rgb(11 23 17 / 88%);
+  --shadow: 0 0 0;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-soft-strong: var(--brand-soft-strong);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-header: var(--header);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-fraunces);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  background-color: var(--canvas);
+  color: var(--ink);
+  background-image:
+    radial-gradient(ellipse 70% 45% at 8% -10%, color-mix(in srgb, var(--brand) 9%, transparent), transparent 70%),
+    radial-gradient(ellipse 55% 35% at 100% 0%, color-mix(in srgb, var(--gold) 8%, transparent), transparent 68%);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: var(--brand);
+  color: var(--brand-foreground);
+}
+
+* {
+  border-color: var(--line);
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.font-display {
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Swiper theme */
+.swiper-button-next,
+.swiper-button-prev {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--line) 85%, transparent);
+  color: var(--ink) !important;
+  backdrop-filter: blur(10px);
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: var(--surface);
+  transform: scale(1.04);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 15px !important;
+  font-weight: 700;
+}
+
+.swiper-pagination-bullet {
+  width: 7px !important;
+  height: 7px !important;
+  background: var(--ink) !important;
+  opacity: 0.28 !important;
+  transition: width 200ms ease, opacity 200ms ease;
+}
+
+.swiper-pagination-bullet-active {
+  width: 26px !important;
+  border-radius: 999px !important;
+  opacity: 1 !important;
+  background: var(--brand) !important;
+}
+
+.hero-swiper .swiper-button-next,
+.hero-swiper .swiper-button-prev {
+  display: none;
+  background: rgb(255 255 255 / 10%);
+  border-color: rgb(255 255 255 / 16%);
+  color: #f6f1e6 !important;
+}
+
+.hero-swiper .swiper-button-next:hover,
+.hero-swiper .swiper-button-prev:hover {
+  background: rgb(255 255 255 / 16%);
+}
+
+@media (min-width: 1024px) {
+  .hero-swiper .swiper-button-next,
+  .hero-swiper .swiper-button-prev {
+    display: flex;
+  }
+}
+
+.hero-swiper .swiper-pagination {
+  bottom: 24px !important;
+  text-align: left !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(1280px, 100% - 3rem) !important;
+}
+
+@media (min-width: 1024px) {
+  .hero-swiper .swiper-pagination {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+}
+
+.hero-swiper .swiper-pagination-bullet {
+  background: #fff !important;
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+  background: var(--brand) !important;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: rise-in 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.04);
+  }
+}
+
+.animate-soft-pulse {
+  animation: soft-pulse 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-rise,
+  .animate-soft-pulse {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
