@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 interface EmptyStateProps {
   title: string;
-  description: string;
+  
   actionLabel?: string;
   actionHref?: string;
   icon?: ReactNode;
