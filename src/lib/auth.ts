@@ -24,7 +24,7 @@ if (process.env.NODE_ENV !== "production") {
 const db = client.db(process.env.MONGODB_DB || "booknook");
 
 const appUrl =
-  process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  process.env.NEXT_PUBLIC_APP_URL || "https://assignment-8-mauve-three.vercel.app/";
 
 const googleConfigured = Boolean(
   process.env.GOOGLE_CLIENT_ID &&

@@ -9,7 +9,10 @@ export const BOOK_CATEGORIES = [
 export type BookCategory = (typeof BOOK_CATEGORIES)[number];
 
 export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  process.env.NEXT_PUBLIC_API_URL || "https://assignment-8-mauve-three.vercel.app/api";
+
+export const BETTER_AUTH_URL =
+  process.env.BETTER_AUTH_URL || "https://assignment-8-mauve-three.vercel.app/api/auth";  
 
 export const GOOGLE_AUTH_ENABLED =
   Boolean(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
