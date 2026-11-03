@@ -36,10 +36,9 @@ const vercelAppUrl =
 const configuredAuthUrl =
   process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL;
 
-// Better Auth's baseURL must be the application origin. Normalize values
-// that were configured with the /api/auth path to prevent duplicate paths.
 function getAppOrigin(value?: string): string | undefined {
   if (!value) return undefined;
+
   try {
     return new URL(value).origin;
   } catch {
@@ -50,20 +49,24 @@ function getAppOrigin(value?: string): string | undefined {
 const appUrl =
   (process.env.VERCEL_ENV === "production"
     ? getAppOrigin(configuredAuthUrl) || getAppOrigin(vercelAppUrl)
-    : getAppOrigin(vercelAppUrl) || getAppOrigin(configuredAuthUrl)) ||
+    : getAppOrigin(configuredAuthUrl) || getAppOrigin(vercelAppUrl)) ||
   "http://localhost:3000";
 
 const trustedOrigins = Array.from(
   new Set(
     [
+      "http://localhost:3000",
+      "http://127.0.0.1:3000",
       appUrl,
+      getAppOrigin(configuredAuthUrl),
       getAppOrigin(process.env.NEXT_PUBLIC_APP_URL),
       getAppOrigin(vercelAppUrl),
-      getAppOrigin(
-        process.env.VERCEL_PROJECT_PRODUCTION_URL
-          ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-          : undefined
-      ),
+      vercelProductionUrl
+        ? `https://${vercelProductionUrl}`
+        : undefined,
+      vercelDeploymentUrl
+        ? `https://${vercelDeploymentUrl}`
+        : undefined,
     ].filter((origin): origin is string => Boolean(origin))
   )
 );
@@ -89,9 +92,7 @@ export const auth = betterAuth({
 
   database: mongodbAdapter(db),
 
-  plugins: [
-    jwt(),
-  ],
+  plugins: [jwt()],
 
   account: {
     accountLinking: {
