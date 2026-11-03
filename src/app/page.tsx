@@ -1,9 +1,18 @@
+
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import {
+  ArrowRight,
+  BookOpen,
+  Search,
+  Share2,
+  RefreshCw,
+  Sparkles,
+} from "lucide-react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
@@ -23,7 +32,6 @@ function HomeContent() {
   useEffect(() => {
     async function fetchLatest() {
       try {
-        // Home page-e latest 5 ba 10-ti book dekhabe
         const data = await apiFetch<Book[]>("/books?sort=newest&limit=10", {
           auth: false,
         });
@@ -34,63 +42,116 @@ function HomeContent() {
         setLoading(false);
       }
     }
+
     fetchLatest();
   }, []);
 
   const bannerSlides = [
     {
-      title: "Your neighbourhood library, online",
+      eyebrow: "Discover your next chapter",
+      title: "Your neighbourhood library, online.",
       subtitle:
-        "Discover, borrow, and read stories from timeless classics to modern bestsellers.",
-      bg: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1600&q=80",
+        "Explore a growing collection of books, discover new perspectives, and find your next favorite read.",
+      bg: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1800&q=85",
     },
     {
-      title: "Share your shelves with fellow readers",
+      eyebrow: "A community of readers",
+      title: "Share your shelves. Share stories.",
       subtitle:
-        "Catalog books from your personal room and lend them to community members.",
-      bg: "https://images.unsplash.com/photo-1507842229451-7f01be7a70d3?auto=format&fit=crop&w=1600&q=80",
+        "Give your favorite books a new home by sharing them with readers in your community.",
+      bg: "https://images.unsplash.com/photo-1507842229451-7f01be7a70d3?auto=format&fit=crop&w=1800&q=85",
     },
     {
-      title: "Read seamlessly in three quiet steps",
+      eyebrow: "Reading made simple",
+      title: "More stories. Less barriers.",
       subtitle:
-        "Select a book, confirm your borrow date, and return when you're finished.",
-      bg: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1600&q=80",
+        "Find a book, borrow it with ease, and enjoy the simple pleasure of reading.",
+      bg: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1800&q=85",
+    },
+  ];
+
+  const steps = [
+    {
+      number: "01",
+      title: "Discover a Book",
+      description:
+        "Explore the collection and find stories that match your interests.",
+      icon: Search,
+    },
+    {
+      number: "02",
+      title: "Borrow & Enjoy",
+      description:
+        "Choose an available book and start your next reading adventure.",
+      icon: BookOpen,
+    },
+    {
+      number: "03",
+      title: "Return & Share",
+      description:
+        "Return your book and make it available for another reader.",
+      icon: RefreshCw,
     },
   ];
 
   return (
-    <div className="space-y-16 pb-16">
-      {/* 1. Hero Swiper Section */}
-      <section className="relative h-[480px] w-full overflow-hidden sm:h-[540px]">
+    <div className="overflow-hidden pb-16">
+      <section className="relative h-[440px] w-full overflow-hidden sm:h-[500px] lg:h-[590px]">
         <Swiper
           modules={[Autoplay, Pagination, Navigation]}
           slidesPerView={1}
-          autoplay={{ delay: 5500, disableOnInteraction: false }}
+          loop
+          autoplay={{
+            delay: 5500,
+            disableOnInteraction: false,
+          }}
           pagination={{ clickable: true }}
           navigation
           className="hero-swiper h-full w-full"
         >
-          {bannerSlides.map((slide, idx) => (
-            <SwiperSlide key={idx}>
+          {bannerSlides.map((slide, index) => (
+            <SwiperSlide key={index}>
               <div
-                className="relative flex h-full w-full items-center justify-center bg-cover bg-center px-6"
+                className="relative flex h-full items-center justify-center bg-cover bg-center px-5 sm:px-10"
                 style={{ backgroundImage: `url(${slide.bg})` }}
               >
-                <div className="absolute inset-0 bg-black/65 backdrop-blur-[2px]" />
-                <div className="relative z-10 max-w-3xl text-center text-white">
-                  <span className="text-xs font-bold uppercase tracking-[0.2em] text-brand">
-                    BookNook Shelf
-                  </span>
-                  <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-6xl">
-                    {slide.title}
-                  </h1>
-                  <p className="mx-auto mt-4 max-w-xl text-sm text-gray-300 sm:text-base">
-                    {slide.subtitle}
-                  </p>
-                  <div className="mt-8 flex justify-center gap-4">
-                    <Button asChild className="rounded-xl px-6 py-5 text-sm font-semibold">
-                      <Link href="/books">Explore All Books</Link>
-                    </Button>
+                <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/30" />
+                <div className="absolute inset-0 bg-black/15" />
+
+                <div className="relative z-10 mx-auto w-full max-w-7xl pb-8 text-center sm:pb-10 lg:text-left">
+                  <div className="mx-auto max-w-3xl lg:mx-0">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-white backdrop-blur-md sm:text-xs">
+                      <Sparkles className="size-3.5 text-brand" />
+                      {slide.eyebrow}
+                    </span>
+
+                    <h1 className="mt-6 font-display text-3xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-7xl">
+                      {slide.title}
+                    </h1>
+
+                    <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-white/75 sm:text-base lg:mx-0 lg:text-lg">
+                      {slide.subtitle}
+                    </p>
+
+                    <div className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
+                      <Button
+                        asChild
+                        className="h-12 rounded-xl bg-brand px-6 text-sm font-bold text-brand-foreground shadow-lg shadow-black/20 transition-all hover:-translate-y-0.5 hover:bg-brand-strong"
+                      >
+                        <Link href="/books">
+                          Explore Books
+                          <ArrowRight className="ml-2 size-4" />
+                        </Link>
+                      </Button>
+
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="h-12 rounded-xl border-white/30 bg-white/10 px-6 text-sm font-bold text-white backdrop-blur-md hover:bg-white/20 hover:text-white"
+                      >
+                        <Link href="/register">Join Community</Link>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -99,123 +160,187 @@ function HomeContent() {
         </Swiper>
       </section>
 
-      {/* 2. New Arrivals (5/2 Columns Grid) */}
-      <section className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-        <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6">
+      <section className="mx-auto max-w-7xl px-4 pt-16 sm:px-6 lg:px-8 lg:pt-24">
+        <div className="flex flex-wrap items-end justify-between gap-5 border-b border-line pb-6">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-brand">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand sm:text-xs">
               Fresh additions
             </p>
-            <h2 className="mt-1 font-display text-3xl font-semibold text-ink sm:text-4xl">
+            <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
               New Arrivals
             </h2>
+            <p className="mt-2 text-sm text-muted">
+              Discover the latest additions to our community shelf.
+            </p>
           </div>
-          <Link href="/books" className="text-xs font-semibold text-brand hover:underline">
-            View full shelf →
+
+          <Link
+            href="/books"
+            className="inline-flex items-center gap-2 text-xs font-bold text-brand transition-all hover:gap-3 sm:text-sm"
+          >
+            View All Books
+            <ArrowRight className="size-4" />
           </Link>
         </div>
 
         {loading ? (
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-            {Array.from({ length: 5 }).map((_, i) => (
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
+            {Array.from({ length: 10 }).map((_, index) => (
               <div
-                key={i}
+                key={index}
                 className="overflow-hidden rounded-2xl border border-line bg-surface p-3"
               >
-                <Skeleton className="aspect-[3/4] w-full" />
-                <Skeleton className="mt-3 h-4 w-3/4" />
+                <Skeleton className="aspect-[3/4] w-full rounded-xl" />
+                <Skeleton className="mt-4 h-4 w-3/4" />
                 <Skeleton className="mt-2 h-3 w-1/2" />
               </div>
             ))}
           </div>
-        ) : (
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        ) : newArrivals.length > 0 ? (
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
             {newArrivals.map((book) => (
               <BookCard key={book._id} book={book} />
             ))}
           </div>
+        ) : (
+          <div className="mt-8 rounded-3xl border border-dashed border-line bg-surface/60 px-5 py-14 text-center">
+            <BookOpen className="mx-auto size-9 text-muted" />
+            <h3 className="mt-4 font-display text-lg font-bold text-ink">
+              No Books Available Yet
+            </h3>
+            <p className="mt-2 text-sm text-muted">
+              New books will appear here when they are added.
+            </p>
+          </div>
         )}
 
-        {/* See All Books Button */}
         <div className="mt-10 flex justify-center">
-          <Button asChild size="lg" className="rounded-xl px-8 py-5 text-sm font-semibold shadow-md">
-            <Link href="/books">See All Books</Link>
+          <Button
+            asChild
+            className="h-12 rounded-xl bg-brand px-7 text-sm font-bold text-brand-foreground shadow-lg shadow-brand/10 hover:bg-brand-strong"
+          >
+            <Link href="/books">
+              Explore Full Collection
+              <ArrowRight className="ml-2 size-4" />
+            </Link>
           </Button>
         </div>
       </section>
 
-      {/* 3. How Borrowing Works */}
-      <section className="border-y border-line bg-surface/40 py-16">
-        <div className="mx-auto max-w-7xl px-5 text-center sm:px-6 lg:px-8">
-          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-brand">
-            Simple & Transparent
-          </p>
-          <h2 className="mt-1 font-display text-3xl font-semibold text-ink sm:text-4xl">
-            How Borrowing Works
-          </h2>
-          <p className="mx-auto mt-2 max-w-md text-sm text-muted">
-            No library cards, no complex paperwork. Just sharing stories.
-          </p>
+      <section className="mt-20 border-y border-line bg-surface/70 py-16 sm:mt-24 sm:py-20">
+        <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-xl text-center">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand sm:text-xs">
+              Simple & meaningful
+            </p>
+            <h2 className="mt-3 font-display text-3xl font-bold text-ink sm:text-4xl">
+              How BookNook Works
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-muted">
+              A better way to discover, borrow, and share books with your
+              community.
+            </p>
+          </div>
 
-          <div className="mt-12 grid gap-6 text-left sm:grid-cols-3">
-            <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
-              <span className="inline-block rounded-lg bg-brand-soft px-2.5 py-1 text-xs font-bold text-brand">
-                01
-              </span>
-              <h3 className="mt-4 font-display text-lg font-bold text-ink">Find a Book</h3>
-              <p className="mt-2 text-xs leading-relaxed text-muted">
-                Explore the public catalog, filter by your favorite genre, or search by title and author.
-              </p>
-            </div>
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {steps.map((step) => {
+              const Icon = step.icon;
 
-            <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
-              <span className="inline-block rounded-lg bg-brand-soft px-2.5 py-1 text-xs font-bold text-brand">
-                02
-              </span>
-              <h3 className="mt-4 font-display text-lg font-bold text-ink">Borrow It</h3>
-              <p className="mt-2 text-xs leading-relaxed text-muted">
-                Select an available copy, set your estimated return date, and borrow with one click.
-              </p>
-            </div>
+              return (
+                <div
+                  key={step.number}
+                  className="group rounded-3xl border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-black/5 sm:p-8"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-display text-4xl font-bold text-brand/20">
+                      {step.number}
+                    </span>
 
-            <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
-              <span className="inline-block rounded-lg bg-brand-soft px-2.5 py-1 text-xs font-bold text-brand">
-                03
-              </span>
-              <h3 className="mt-4 font-display text-lg font-bold text-ink">Return with Ease</h3>
-              <p className="mt-2 text-xs leading-relaxed text-muted">
-                Finished reading? Mark it returned right from your My Borrows dashboard instantly.
-              </p>
-            </div>
+                    <span className="flex size-12 items-center justify-center rounded-2xl bg-brand-soft text-brand transition-colors group-hover:bg-brand group-hover:text-brand-foreground">
+                      <Icon className="size-5" />
+                    </span>
+                  </div>
+
+                  <h3 className="mt-7 font-display text-xl font-bold text-ink">
+                    {step.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-muted">
+                    {step.description}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* 4. Top Categories */}
-      <section className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <div className="text-center">
-          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-brand">
-            Curated shelves
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand sm:text-xs">
+            Find your next favorite
           </p>
-          <h2 className="mt-1 font-display text-3xl font-semibold text-ink sm:text-4xl">
+          <h2 className="mt-3 font-display text-3xl font-bold text-ink sm:text-4xl">
             Browse by Genre
           </h2>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-muted">
+            Explore different worlds, ideas, and stories through our curated
+            book categories.
+          </p>
         </div>
 
-        <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5">
-          {BOOK_CATEGORIES.map((cat: string) => (
+        <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
+          {BOOK_CATEGORIES.map((category: string) => (
             <Link
-              key={cat}
-              href={`/books?category=${cat}`}
-              className="group flex flex-col items-center rounded-2xl border border-line bg-surface p-6 text-center transition-all hover:-translate-y-1 hover:border-brand/50 hover:bg-surface-muted"
+              key={category}
+              href={`/books?category=${encodeURIComponent(category)}`}
+              className="group flex min-h-36 flex-col items-center justify-center rounded-2xl border border-line bg-surface px-3 py-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:bg-brand-soft/40 hover:shadow-lg sm:min-h-40 sm:rounded-3xl"
             >
-              <div className="flex size-12 items-center justify-center rounded-full bg-brand-soft text-brand transition-colors group-hover:bg-brand group-hover:text-brand-foreground">
-                <CategoryIcon category={cat as BookCategory} className="size-6" />
-              </div>
-              <h4 className="mt-4 font-display text-sm font-semibold text-ink">{cat}</h4>
-              <span className="mt-1 text-[11px] text-muted">Explore shelf →</span>
+              <span className="flex size-12 items-center justify-center rounded-2xl bg-brand-soft text-brand transition-all duration-300 group-hover:rotate-[-5deg] group-hover:bg-brand group-hover:text-brand-foreground">
+                <CategoryIcon
+                  category={category as BookCategory}
+                  className="size-6"
+                />
+              </span>
+
+              <h3 className="mt-4 font-display text-sm font-bold text-ink sm:text-base">
+                {category}
+              </h3>
+
+              <span className="mt-1.5 inline-flex items-center gap-1 text-[10px] font-semibold text-muted transition-colors group-hover:text-brand">
+                Explore shelf
+                <ArrowRight className="size-3 transition-transform group-hover:translate-x-1" />
+              </span>
             </Link>
           ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-3xl bg-brand px-6 py-12 text-center shadow-xl shadow-brand/10 sm:px-12 sm:py-16">
+          <div className="pointer-events-none absolute -right-20 -top-28 size-72 rounded-full border-[40px] border-white/5" />
+          <div className="pointer-events-none absolute -bottom-32 -left-20 size-72 rounded-full border-[40px] border-white/5" />
+
+          <div className="relative mx-auto max-w-2xl">
+            <Share2 className="mx-auto size-8 text-brand-foreground/80" />
+            <h2 className="mt-5 font-display text-3xl font-bold text-brand-foreground sm:text-4xl">
+              Every Book Deserves a Reader.
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-brand-foreground/80 sm:text-base">
+              Share your books with the community and help someone discover
+              their next favorite story.
+            </p>
+
+            <Button
+              asChild
+              className="mt-7 h-12 rounded-xl bg-white px-7 text-sm font-bold text-brand shadow-lg hover:bg-white/90"
+            >
+              <Link href="/add-book">
+                Share a Book
+                <ArrowRight className="ml-2 size-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
     </div>
@@ -227,7 +352,7 @@ export default function HomePage() {
     <Suspense
       fallback={
         <div className="flex min-h-[50vh] items-center justify-center">
-          <div className="size-8 animate-spin rounded-full border-4 border-brand/20 border-t-brand" />
+          <div className="size-9 animate-spin rounded-full border-4 border-brand/20 border-t-brand" />
         </div>
       }
     >

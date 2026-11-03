@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Navbar from "@/components/Navbar";
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     default: "BookNook — Community Library",
     template: "%s | BookNook",
   },
-  description: "A community-driven library where readers borrow, return, and share books.",
+  description:
+    "A community-driven library where readers borrow, return, and share books.",
 };
 
 export default function RootLayout({
@@ -19,16 +21,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
-      <body className="flex min-h-screen flex-col bg-canvas text-ink antialiased">
-        <Toaster position="top-right" />
-        
-        {/* Navbar-কে Suspense দিয়ে র‍্যাপ করা হয়েছে */}
-        <Suspense fallback={<div className="h-16" />}>
+    <html lang="en" suppressHydrationWarning>
+      <body className="flex min-h-screen flex-col bg-canvas font-sans text-ink antialiased">
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: "var(--surface)",
+              color: "var(--ink)",
+              border: "1px solid var(--line)",
+              borderRadius: "14px",
+              fontSize: "13px",
+            },
+          }}
+        />
+
+        <Suspense fallback={<div className="h-[72px]" />}>
           <Navbar />
         </Suspense>
 
-        <main className="flex-1">{children}</main>
+        <main className="min-w-0 flex-1">{children}</main>
 
         <Footer />
       </body>

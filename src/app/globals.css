@@ -1,31 +1,36 @@
+
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --canvas: #0b1711;
-  --surface: #14231a;
-  --surface-muted: #1b2d22;
-  --ink: #f1f5ef;
-  --muted: #9baa9f;
-  --line: #293b30;
+  color-scheme: light;
 
-  --brand: #91cba5;
-  --brand-strong: #a7dbb8;
-  --brand-foreground: #102117;
-  --brand-soft: #1b3525;
-  --brand-soft-strong: #294b35;
+  --canvas: #f7f7f2;
+  --surface: #ffffff;
+  --surface-muted: #f0f2eb;
+  --ink: #19251d;
+  --muted: #718075;
+  --line: #e3e9df;
 
-  --gold: #e0b46f;
-  --gold-soft: #382e1b;
-  --danger: #f18b83;
-  --danger-soft: #3a1e1e;
+  --brand: #28734a;
+  --brand-strong: #1e603b;
+  --brand-foreground: #ffffff;
+  --brand-soft: #e8f3e9;
+  --brand-soft-strong: #d5e9d8;
 
-  --header: rgb(11 23 17 / 88%);
-  --shadow: 0 0 0;
+  --gold: #b98a42;
+  --gold-soft: #f8f0df;
+  --danger: #d75d56;
+  --danger-soft: #fcebea;
+
+  --header: rgb(255 255 255 / 88%);
+  --shadow: 0 12px 35px rgb(25 37 29 / 7%);
 }
 
 .dark {
+  color-scheme: dark;
+
   --canvas: #0b1711;
   --surface: #14231a;
   --surface-muted: #1b2d22;
@@ -45,7 +50,7 @@
   --danger-soft: #3a1e1e;
 
   --header: rgb(11 23 17 / 88%);
-  --shadow: 0 0 0;
+  --shadow: 0 12px 35px rgb(0 0 0 / 18%);
 }
 
 @theme inline {
@@ -71,11 +76,6 @@
 
 html {
   scroll-behavior: smooth;
-  color-scheme: light;
-}
-
-html.dark {
-  color-scheme: dark;
 }
 
 body {
@@ -83,9 +83,18 @@ body {
   background-color: var(--canvas);
   color: var(--ink);
   background-image:
-    radial-gradient(ellipse 70% 45% at 8% -10%, color-mix(in srgb, var(--brand) 9%, transparent), transparent 70%),
-    radial-gradient(ellipse 55% 35% at 100% 0%, color-mix(in srgb, var(--gold) 8%, transparent), transparent 68%);
+    radial-gradient(
+      ellipse 70% 45% at 8% -10%,
+      color-mix(in srgb, var(--brand) 8%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 55% 35% at 100% 0%,
+      color-mix(in srgb, var(--gold) 7%, transparent),
+      transparent 68%
+    );
   background-attachment: fixed;
+  transition: background-color 200ms ease, color 200ms ease;
 }
 
 ::selection {
@@ -105,9 +114,14 @@ select {
   -webkit-tap-highlight-color: transparent;
 }
 
+button,
+a {
+  touch-action: manipulation;
+}
+
 :focus-visible {
   outline: 2px solid var(--brand);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 .font-display {
@@ -118,16 +132,17 @@ select {
   text-wrap: balance;
 }
 
-.no-scrollbar::-webkit-scrollbar {
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar {
   display: none;
 }
 
-.no-scrollbar {
+.no-scrollbar,
+.scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
-/* Swiper theme */
 .swiper-button-next,
 .swiper-button-prev {
   width: 42px !important;
@@ -195,13 +210,6 @@ select {
   width: min(1280px, 100% - 3rem) !important;
 }
 
-@media (min-width: 1024px) {
-  .hero-swiper .swiper-pagination {
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-  }
-}
-
 .hero-swiper .swiper-pagination-bullet {
   background: #fff !important;
 }
@@ -215,6 +223,7 @@ select {
     opacity: 0;
     transform: translateY(16px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -231,6 +240,7 @@ select {
     opacity: 0.45;
     transform: scale(0.96);
   }
+
   50% {
     opacity: 0.8;
     transform: scale(1.04);

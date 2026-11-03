@@ -1,75 +1,109 @@
+
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import {
+  ArrowUpRight,
+  BookOpen,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 import { Book } from "@/types";
 import BookCover from "./BookCover";
 import CategoryIcon from "./CategoryIcon";
-import { Badge } from "./ui/badge";
 import { useSession } from "@/lib/auth-client";
 
 export default function BookCard({ book }: { book: Book }) {
   const router = useRouter();
   const { data: session } = useSession();
 
-  const handleDetailsClick = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const available = book.totalCopies > 0;
+
+  const handleDetailsClick = () => {
     if (!session) {
-      // User login na thakle login page-e redirect korbe
       router.push(`/login?redirect=/books/${book._id}`);
-    } else {
-      // Login thakle details page-e jabe
-      router.push(`/books/${book._id}`);
+      return;
     }
+
+    router.push(`/books/${book._id}`);
   };
 
   return (
-    <div className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-line bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg">
-      <div>
-        <div className="aspect-[3/4] w-full overflow-hidden bg-surface-muted">
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line/80 bg-surface shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-black/5 sm:rounded-3xl">
+      <div className="relative overflow-hidden bg-surface-muted">
+        <div className="aspect-[3/4] w-full">
           <BookCover
             src={book.image}
             alt={book.title}
             title={book.title}
-            className="size-full transition-transform duration-500 group-hover:scale-105"
+            className="size-full"
+            imageClassName="transition-transform duration-700 group-hover:scale-105"
           />
         </div>
 
-        <div className="p-5">
-          <div className="flex items-center justify-between gap-2">
-            <Badge
-              variant="outline"
-              className="gap-1.5 py-0.5 text-[11px] font-semibold text-brand"
-            >
-              <CategoryIcon category={book.category} className="size-3" />
-              {book.category}
-            </Badge>
-            <span className="text-[11px] font-medium text-muted">
-              {book.totalCopies > 0
-                ? `${book.totalCopies} copies`
-                : "Out of stock"}
-            </span>
-          </div>
+        <div className="absolute left-2.5 top-2.5 sm:left-3 sm:top-3">
+          <span className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-white/20 bg-black/55 px-2.5 py-1.5 text-[9px] font-semibold text-white shadow-sm backdrop-blur-md sm:text-[10px]">
+            <CategoryIcon
+              category={book.category}
+              className="size-3 shrink-0"
+            />
+            <span className="truncate">{book.category}</span>
+          </span>
+        </div>
 
+        <div className="absolute right-2.5 top-2.5 sm:right-3 sm:top-3">
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-1.5 text-[9px] font-bold shadow-sm backdrop-blur-md sm:text-[10px] ${
+              available
+                ? "bg-emerald-500/90 text-white"
+                : "bg-black/65 text-white"
+            }`}
+          >
+            {available ? (
+              <CheckCircle2 className="size-3" />
+            ) : (
+              <XCircle className="size-3" />
+            )}
+            {available ? "Available" : "Unavailable"}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col p-3 sm:p-4">
+        <div className="min-h-0 flex-1">
           <h3
-            className="mt-3 line-clamp-1 font-display text-lg font-bold text-ink"
+            className="line-clamp-2 min-h-[2.7rem] font-display text-sm font-bold leading-snug text-ink transition-colors group-hover:text-brand sm:text-base"
             title={book.title}
           >
             {book.title}
           </h3>
-          <p className="line-clamp-1 text-xs text-muted">by {book.author}</p>
+
+          <p className="mt-1.5 truncate text-[11px] text-muted sm:text-xs">
+            by {book.author}
+          </p>
+        </div>
+
+        <div className="mt-4 flex items-center justify-between border-t border-line/80 pt-3">
+          <div>
+            <p className="text-[9px] font-medium uppercase tracking-wider text-muted sm:text-[10px]">
+              Copies
+            </p>
+            <p className="mt-0.5 text-xs font-bold text-ink sm:text-sm">
+              {book.totalCopies}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleDetailsClick}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-brand px-3 py-2 text-[10px] font-bold text-brand-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-md sm:px-3.5 sm:text-xs"
+          >
+            <BookOpen className="size-3.5" />
+            Details
+            <ArrowUpRight className="size-3.5" />
+          </button>
         </div>
       </div>
-
-      <div className="px-5 pb-5">
-        <button
-          type="button"
-          onClick={handleDetailsClick}
-          className="flex w-full items-center justify-center rounded-xl border border-brand/30 bg-brand-soft py-2.5 text-xs font-semibold text-brand transition-colors hover:bg-brand hover:text-brand-foreground"
-        >
-          View Details
-        </button>
-      </div>
-    </div>
+    </article>
   );
 }

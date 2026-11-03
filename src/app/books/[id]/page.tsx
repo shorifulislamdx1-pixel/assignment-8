@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Suspense, use, useEffect, useState } from "react";
@@ -10,7 +11,13 @@ import CategoryIcon from "@/components/CategoryIcon";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import { User, ArrowLeft } from "lucide-react";
+import {
+  User,
+  ArrowLeft,
+  CalendarDays,
+  Clock3,
+  Sparkles,
+} from "lucide-react";
 import Link from "next/link";
 
 function BookDetailsContent({
@@ -28,7 +35,6 @@ function BookDetailsContent({
   const [returnDate, setReturnDate] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Login na thakle kono kichu render na kore shorashori login page-e pathiye dibe
   useEffect(() => {
     if (!isPending && !session) {
       router.replace(`/login?redirect=/books/${id}`);
@@ -54,7 +60,6 @@ function BookDetailsContent({
     }
   }, [id, session]);
 
-  // Login na thakle ba check houar shomoy blank / spinner thakbe
   if (isPending || !session) {
     return (
       <div className="flex min-h-[75vh] items-center justify-center">
@@ -86,12 +91,14 @@ function BookDetailsContent({
 
   const handleBorrow = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!returnDate) {
       toast.error("Please pick a return deadline date");
       return;
     }
 
     setSubmitting(true);
+
     try {
       await apiFetch("/borrows", {
         method: "POST",
@@ -109,6 +116,7 @@ function BookDetailsContent({
       setBook((prev) =>
         prev ? { ...prev, totalCopies: prev.totalCopies - 1 } : null
       );
+      setReturnDate("");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Could not borrow book";
       toast.error(msg);
@@ -116,6 +124,14 @@ function BookDetailsContent({
       setSubmitting(false);
     }
   };
+
+  const formattedReturnDate = returnDate
+    ? new Date(`${returnDate}T12:00:00`).toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : "Select your return date";
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-10 sm:px-6 lg:px-8">
@@ -211,65 +227,130 @@ function BookDetailsContent({
       </div>
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-line bg-surface p-6 shadow-2xl">
-            <h3 className="font-display text-xl font-bold text-ink">
-              Confirm Borrow
-            </h3>
-            <p className="mt-1 text-xs text-muted">
-              Please verify your details and return deadline.
-            </p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-4 backdrop-blur-md">
+          <div className="my-auto w-full max-w-md overflow-hidden rounded-[28px] border border-line bg-surface shadow-2xl">
+            <div className="relative overflow-hidden border-b border-line bg-brand/[0.06] px-7 py-6">
+              <div className="absolute -right-8 -top-10 size-36 rounded-full bg-brand/10 blur-2xl" />
 
-            <form onSubmit={handleBorrow} className="mt-5 space-y-4">
-              <div>
-                <label className="mb-1 block text-xs font-semibold text-muted">
+              <div className="relative flex items-center gap-3">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-brand text-white shadow-lg shadow-brand/20">
+                  <BookOpenIcon />
+                </div>
+
+                <div>
+                  <h3 className="font-display text-xl font-bold text-ink">
+                    Confirm Borrow
+                  </h3>
+                  <p className="mt-1 text-xs text-muted">
+                    One more step to your next read.
+                  </p>
+                </div>
+              </div>
+
+              <div className="relative mt-4 flex items-center gap-2 text-[11px] font-semibold text-brand">
+                <Sparkles size={13} />
+                Please verify your details and return deadline.
+              </div>
+            </div>
+
+            <form onSubmit={handleBorrow} className="space-y-5 p-7">
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-xs font-bold text-ink">
+                  <User size={14} className="text-brand" />
                   Your Name
                 </label>
+
                 <input
                   type="text"
                   readOnly
                   value={session?.user?.name || ""}
-                  className="w-full rounded-xl border border-line bg-surface-muted px-3.5 py-2 text-xs text-muted outline-none"
+                  className="w-full rounded-xl border border-line bg-surface-muted px-4 py-3 text-sm text-muted outline-none"
                 />
               </div>
 
-              <div>
-                <label className="mb-1 block text-xs font-semibold text-muted">
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-xs font-bold text-ink">
+                  <User size={14} className="text-brand" />
                   Your Email
                 </label>
+
                 <input
                   type="email"
                   readOnly
                   value={session?.user?.email || ""}
-                  className="w-full rounded-xl border border-line bg-surface-muted px-3.5 py-2 text-xs text-muted outline-none"
+                  className="w-full rounded-xl border border-line bg-surface-muted px-4 py-3 text-sm text-muted outline-none"
                 />
               </div>
 
-              <div>
-                <label className="mb-1 block text-xs font-semibold text-muted">
+              <div className="space-y-3">
+                <label className="flex items-center gap-2 text-xs font-bold text-ink">
+                  <CalendarDays size={15} className="text-brand" />
                   Return Date
                 </label>
-                <input
-                  type="date"
-                  required
-                  min={new Date().toISOString().split("T")[0]}
-                  value={returnDate}
-                  onChange={(e) => setReturnDate(e.target.value)}
-                  className="w-full rounded-xl border border-line bg-surface px-3.5 py-2 text-xs text-ink outline-none focus:border-brand"
-                />
+
+                <div className="group relative overflow-hidden rounded-2xl border border-line bg-surface transition-all duration-300 hover:border-brand/50 hover:shadow-lg hover:shadow-brand/5 focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/10">
+                  <div className="flex items-center gap-4 p-4">
+                    <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand transition-colors group-hover:bg-brand group-hover:text-white">
+                      <CalendarDays size={23} />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted">
+                        Select Deadline
+                      </p>
+                      <p className="mt-1 truncate text-sm font-bold text-ink">
+                        {formattedReturnDate}
+                      </p>
+                      <p className="mt-1 flex items-center gap-1 text-[10px] text-muted">
+                        <Clock3 size={11} />
+                        Choose when to return this book
+                      </p>
+                    </div>
+
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-surface-muted text-muted">
+                      <ArrowLeft className="size-4 -rotate-90" />
+                    </div>
+                  </div>
+
+                  <input
+                    type="date"
+                    required
+                    min={new Date().toLocaleDateString("en-CA")}
+                    value={returnDate}
+                    onChange={(e) => setReturnDate(e.target.value)}
+                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                    aria-label="Select return date"
+                  />
+
+                  <div className="h-1 w-full bg-brand/10">
+                    <div className="h-full w-1/3 rounded-r-full bg-brand transition-all" />
+                  </div>
+                </div>
+
+                <p className="px-1 text-[11px] text-muted">
+                  Please choose a suitable date to return your borrowed book.
+                </p>
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-2">
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setModalOpen(false)}
-                  className="flex-1"
+                  onClick={() => {
+                    setModalOpen(false);
+                    setReturnDate("");
+                  }}
+                  className="h-12 flex-1 rounded-xl"
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={submitting} className="flex-1">
-                  {submitting ? "Confirming..." : "Confirm"}
+
+                <Button
+                  type="submit"
+                  disabled={submitting || !returnDate}
+                  className="h-12 flex-1 rounded-xl shadow-lg shadow-brand/15 transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:translate-y-0"
+                >
+                  {submitting ? "Confirming..." : "Confirm Borrow"}
                 </Button>
               </div>
             </form>
@@ -278,6 +359,10 @@ function BookDetailsContent({
       )}
     </div>
   );
+}
+
+function BookOpenIcon() {
+  return <CalendarDays size={23} />;
 }
 
 export default function BookDetailsPage({
