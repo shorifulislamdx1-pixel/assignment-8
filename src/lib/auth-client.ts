@@ -1,18 +1,11 @@
-
 import { createAuthClient } from "better-auth/react";
 import { jwtClient } from "better-auth/client/plugins";
 
-// No explicit baseURL: better-auth resolves to the current origin's
-// "/api/auth", so auth works identically on localhost, the canonical
-// Vercel domain, and any deployment alias (an absolute URL here would
-// make cross-origin requests that browsers block or refuse cookies for).
+// Keep authentication same-origin. Better Auth's API route lives at
+// /api/auth on this Next.js deployment, so do not point the browser at a
+// localhost or a separate Vercel preview URL.
 export const authClient = createAuthClient({
-   baseURL:
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000",
-    
-  plugins: [
-    jwtClient(),
-  ],
+  plugins: [jwtClient()],
 });
 
 export const {

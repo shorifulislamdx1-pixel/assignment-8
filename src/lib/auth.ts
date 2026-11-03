@@ -36,11 +36,37 @@ const vercelAppUrl =
 const configuredAuthUrl =
   process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL;
 
-const appUrl = (
-  configuredAuthUrl && !configuredAuthUrl.includes("localhost")
-    ? configuredAuthUrl
-    : vercelAppUrl || configuredAuthUrl || "http://localhost:3000"
-).replace(/\/+$/, "");
+// Better Auth's baseURL must be the application origin. Normalize values
+// that were configured with the /api/auth path to prevent duplicate paths.
+function getAppOrigin(value?: string): string | undefined {
+  if (!value) return undefined;
+  try {
+    return new URL(value).origin;
+  } catch {
+    return undefined;
+  }
+}
+
+const appUrl =
+  (process.env.VERCEL_ENV === "production"
+    ? getAppOrigin(configuredAuthUrl) || getAppOrigin(vercelAppUrl)
+    : getAppOrigin(vercelAppUrl) || getAppOrigin(configuredAuthUrl)) ||
+  "http://localhost:3000";
+
+const trustedOrigins = Array.from(
+  new Set(
+    [
+      appUrl,
+      getAppOrigin(process.env.NEXT_PUBLIC_APP_URL),
+      getAppOrigin(vercelAppUrl),
+      getAppOrigin(
+        process.env.VERCEL_PROJECT_PRODUCTION_URL
+          ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+          : undefined
+      ),
+    ].filter((origin): origin is string => Boolean(origin))
+  )
+);
 
 const googleConfigured = Boolean(
   process.env.GOOGLE_CLIENT_ID &&
@@ -59,7 +85,7 @@ export const auth = betterAuth({
 
   secret: process.env.BETTER_AUTH_SECRET,
 
-  trustedOrigins: [appUrl],
+  trustedOrigins,
 
   database: mongodbAdapter(db),
 

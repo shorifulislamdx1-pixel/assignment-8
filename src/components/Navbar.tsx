@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { BookOpen, User, LogOut, UserCircle } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
 import ThemeToggle from "@/components/ThemeToggle";
+import { clearApiToken } from "@/lib/api";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -153,9 +154,13 @@ export default function Navbar() {
                     {/* Logout Button */}
                     <button
                       type="button"
-                      onClick={() => {
+                      onClick={async () => {
                         setMenuOpen(false);
-                        signOut();
+                        try {
+                          await signOut();
+                        } finally {
+                          clearApiToken();
+                        }
                       }}
                       className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-danger transition-colors hover:bg-danger-soft"
                     >

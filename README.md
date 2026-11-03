@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BookNook
 
-## Getting Started
+## Local development
 
-First, run the development server:
+1. Copy `.env.example` to `.env.local` and fill in the required values.
+2. Install dependencies with `npm install`.
+3. Start the app with `npm run dev`.
+4. Open `http://localhost:3000`.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The Next.js app serves the Better Auth endpoints at `/api/auth`, the JWT exchange at
+`/api/token`, and the books/borrows/upload API routes under `/api`. Browser
+authentication is same-origin; do not set the auth client to a localhost or
+separate API deployment URL.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Vercel deployment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Deploy this folder as the Next.js project root. Add these Environment Variables
+in Vercel for Production (and Preview if you use preview deployments):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `MONGODB_URI`
+- `MONGODB_DB`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL` — canonical site origin only, e.g.
+  `https://your-domain.vercel.app` (do not append `/api/auth`)
+- `JWT_SECRET`
+- `JWT_ISSUER=booknook-web`
+- `JWT_AUDIENCE=booknook-api`
+- `IMGBB_API_KEY` — required for book cover uploads
+- `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` — optional Google login
+- `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` — optional GitHub login
 
-## Learn More
+Set `NEXT_PUBLIC_APP_URL` to the canonical site origin if you use it elsewhere.
+`NEXT_PUBLIC_API_URL` is only used for legacy `/uploads/...` image URLs; it is
+not the Better Auth endpoint. Email/password login does not require OAuth keys.
 
-To learn more about Next.js, take a look at the following resources:
+After changing environment variables, redeploy the Vercel project.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Security
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Never commit `.env.local`, `.env`, OAuth secrets, database credentials, or JWT
+secrets. If a real secret was accidentally committed or shared, rotate it.

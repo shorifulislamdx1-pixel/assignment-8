@@ -84,9 +84,11 @@ export async function getDb(): Promise<Db> {
 
   globalForMongo.bookNookApiDbPromise = (async () => {
     try {
-      const client = new MongoClient(
-        process.env.MONGODB_URI || "mongodb://localhost:27017"
-      );
+      const mongoUri = process.env.MONGODB_URI;
+      if (!mongoUri) {
+        throw new Error("MONGODB_URI is not configured.");
+      }
+      const client = new MongoClient(mongoUri);
       await client.connect();
       const db = client.db(process.env.MONGODB_DB || "booknook");
       globalForMongo.bookNookApiMongoClient = client;
