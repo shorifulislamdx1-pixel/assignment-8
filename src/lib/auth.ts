@@ -57,6 +57,7 @@ const trustedOrigins = Array.from(
     [
       "http://localhost:3000",
       "http://127.0.0.1:3000",
+      "https://assignment-8-mauve-three.vercel.app",
       appUrl,
       getAppOrigin(configuredAuthUrl),
       getAppOrigin(process.env.NEXT_PUBLIC_APP_URL),
