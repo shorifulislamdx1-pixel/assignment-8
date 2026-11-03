@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Suspense, use, useEffect, useState } from "react";
@@ -17,8 +16,18 @@ import {
   CalendarDays,
   Clock3,
   Sparkles,
+  BookOpen,
 } from "lucide-react";
 import Link from "next/link";
+
+function getLocalDate() {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
 
 function BookDetailsContent({
   paramsPromise,
@@ -35,6 +44,19 @@ function BookDetailsContent({
   const [returnDate, setReturnDate] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  const today = getLocalDate();
+
+  const maxReturnDate = (() => {
+    const date = new Date();
+    date.setDate(date.getDate() + 60);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  })();
+
   useEffect(() => {
     if (!isPending && !session) {
       router.replace(`/login?redirect=/books/${id}`);
@@ -44,11 +66,16 @@ function BookDetailsContent({
   useEffect(() => {
     async function loadBook() {
       try {
-        const data = await apiFetch<Book>(`/books/${id}`, { auth: false });
+        const data = await apiFetch<Book>(`/books/${id}`, {
+          auth: false,
+        });
+
         setBook(data);
         document.title = `${data.title} | BookNook`;
       } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : "Failed to load book";
+        const msg =
+          err instanceof Error ? err.message : "Failed to load book";
+
         toast.error(msg);
       } finally {
         setLoading(false);
@@ -60,15 +87,7 @@ function BookDetailsContent({
     }
   }, [id, session]);
 
-  if (isPending || !session) {
-    return (
-      <div className="flex min-h-[75vh] items-center justify-center">
-        <div className="size-10 animate-spin rounded-full border-4 border-brand/20 border-t-brand" />
-      </div>
-    );
-  }
-
-  if (loading) {
+  if (isPending || !session || loading) {
     return (
       <div className="flex min-h-[75vh] items-center justify-center">
         <div className="size-10 animate-spin rounded-full border-4 border-brand/20 border-t-brand" />
@@ -82,6 +101,7 @@ function BookDetailsContent({
         <h2 className="font-display text-2xl font-bold text-ink">
           Book Not Found
         </h2>
+
         <Button asChild className="mt-4" variant="outline">
           <Link href="/books">Back to Collection</Link>
         </Button>
@@ -113,12 +133,16 @@ function BookDetailsContent({
 
       toast.success("Book borrowed successfully!");
       setModalOpen(false);
+
       setBook((prev) =>
         prev ? { ...prev, totalCopies: prev.totalCopies - 1 } : null
       );
+
       setReturnDate("");
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Could not borrow book";
+      const msg =
+        err instanceof Error ? err.message : "Could not borrow book";
+
       toast.error(msg);
     } finally {
       setSubmitting(false);
@@ -137,9 +161,10 @@ function BookDetailsContent({
     <div className="mx-auto max-w-5xl px-5 py-10 sm:px-6 lg:px-8">
       <Link
         href="/books"
-        className="mb-6 inline-flex items-center gap-2 text-xs font-semibold text-muted hover:text-ink"
+        className="mb-6 inline-flex items-center gap-2 text-xs font-semibold text-muted transition-colors hover:text-ink"
       >
-        <ArrowLeft className="size-4" /> Back to Collection
+        <ArrowLeft className="size-4" />
+        Back to Collection
       </Link>
 
       <div className="overflow-hidden rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-10">
@@ -155,14 +180,18 @@ function BookDetailsContent({
 
           <div className="flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Badge
                   variant="outline"
                   className="gap-1.5 py-0.5 text-xs font-semibold text-brand"
                 >
-                  <CategoryIcon category={book.category} className="size-3.5" />
+                  <CategoryIcon
+                    category={book.category}
+                    className="size-3.5"
+                  />
                   {book.category}
                 </Badge>
+
                 <span className="text-xs text-muted">
                   Added on {new Date(book.createdAt).toLocaleDateString()}
                 </span>
@@ -171,6 +200,7 @@ function BookDetailsContent({
               <h1 className="mt-3 font-display text-3xl font-semibold text-ink sm:text-4xl">
                 {book.title}
               </h1>
+
               <p className="mt-1 text-sm font-medium text-muted">
                 by {book.author}
               </p>
@@ -180,16 +210,19 @@ function BookDetailsContent({
                   <span className="text-[11px] font-semibold uppercase text-muted">
                     Available Copies
                   </span>
+
                   <p className="text-xl font-bold text-brand">
                     {book.totalCopies}
                   </p>
                 </div>
+
                 <div className="text-right">
                   <span className="text-[11px] font-semibold uppercase text-muted">
                     Added By
                   </span>
+
                   <p className="flex items-center justify-end gap-1 text-xs font-medium text-ink">
-                    <User className="size-3 text-muted" />{" "}
+                    <User className="size-3 text-muted" />
                     {book.userName || book.userEmail}
                   </p>
                 </div>
@@ -199,6 +232,7 @@ function BookDetailsContent({
                 <h4 className="text-xs font-bold uppercase tracking-wider text-muted">
                   Description
                 </h4>
+
                 <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink/90">
                   {book.description}
                 </p>
@@ -234,13 +268,14 @@ function BookDetailsContent({
 
               <div className="relative flex items-center gap-3">
                 <div className="flex size-12 items-center justify-center rounded-2xl bg-brand text-white shadow-lg shadow-brand/20">
-                  <BookOpenIcon />
+                  <BookOpen size={23} />
                 </div>
 
                 <div>
                   <h3 className="font-display text-xl font-bold text-ink">
                     Confirm Borrow
                   </h3>
+
                   <p className="mt-1 text-xs text-muted">
                     One more step to your next read.
                   </p>
@@ -263,7 +298,7 @@ function BookDetailsContent({
                 <input
                   type="text"
                   readOnly
-                  value={session?.user?.name || ""}
+                  value={session.user.name || ""}
                   className="w-full rounded-xl border border-line bg-surface-muted px-4 py-3 text-sm text-muted outline-none"
                 />
               </div>
@@ -277,59 +312,53 @@ function BookDetailsContent({
                 <input
                   type="email"
                   readOnly
-                  value={session?.user?.email || ""}
+                  value={session.user.email || ""}
                   className="w-full rounded-xl border border-line bg-surface-muted px-4 py-3 text-sm text-muted outline-none"
                 />
               </div>
 
               <div className="space-y-3">
-                <label className="flex items-center gap-2 text-xs font-bold text-ink">
+                <label
+                  htmlFor="return-date"
+                  className="flex items-center gap-2 text-xs font-bold text-ink"
+                >
                   <CalendarDays size={15} className="text-brand" />
                   Return Date
                 </label>
 
-                <div className="group relative overflow-hidden rounded-2xl border border-line bg-surface transition-all duration-300 hover:border-brand/50 hover:shadow-lg hover:shadow-brand/5 focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/10">
-                  <div className="flex items-center gap-4 p-4">
-                    <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand transition-colors group-hover:bg-brand group-hover:text-white">
-                      <CalendarDays size={23} />
+                <div className="rounded-2xl border border-line bg-surface p-4 transition-all focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/10">
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand">
+                      <CalendarDays size={21} />
                     </div>
 
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0">
                       <p className="text-[10px] font-bold uppercase tracking-widest text-muted">
-                        Select Deadline
+                        Selected Deadline
                       </p>
+
                       <p className="mt-1 truncate text-sm font-bold text-ink">
                         {formattedReturnDate}
                       </p>
-                      <p className="mt-1 flex items-center gap-1 text-[10px] text-muted">
-                        <Clock3 size={11} />
-                        Choose when to return this book
-                      </p>
-                    </div>
-
-                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-surface-muted text-muted">
-                      <ArrowLeft className="size-4 -rotate-90" />
                     </div>
                   </div>
 
                   <input
+                    id="return-date"
                     type="date"
                     required
-                    min={new Date().toLocaleDateString("en-CA")}
+                    min={today}
+                    max={maxReturnDate}
                     value={returnDate}
                     onChange={(e) => setReturnDate(e.target.value)}
-                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-                    aria-label="Select return date"
+                    className="block min-h-12 w-full cursor-pointer rounded-xl border border-line bg-surface-muted px-4 py-3 text-sm font-semibold text-ink outline-none transition-colors hover:border-brand focus:border-brand focus:ring-2 focus:ring-brand/20"
                   />
 
-                  <div className="h-1 w-full bg-brand/10">
-                    <div className="h-full w-1/3 rounded-r-full bg-brand transition-all" />
-                  </div>
+                  <p className="mt-3 flex items-center gap-1.5 text-[11px] text-muted">
+                    <Clock3 size={12} />
+                    You can borrow a book for up to 60 days.
+                  </p>
                 </div>
-
-                <p className="px-1 text-[11px] text-muted">
-                  Please choose a suitable date to return your borrowed book.
-                </p>
               </div>
 
               <div className="flex gap-3 pt-2">
@@ -359,10 +388,6 @@ function BookDetailsContent({
       )}
     </div>
   );
-}
-
-function BookOpenIcon() {
-  return <CalendarDays size={23} />;
 }
 
 export default function BookDetailsPage({
