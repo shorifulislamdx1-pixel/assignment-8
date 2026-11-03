@@ -7,6 +7,9 @@ import { jwtClient } from "better-auth/client/plugins";
 // Vercel domain, and any deployment alias (an absolute URL here would
 // make cross-origin requests that browsers block or refuse cookies for).
 export const authClient = createAuthClient({
+   baseURL:
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000",
+    
   plugins: [
     jwtClient(),
   ],

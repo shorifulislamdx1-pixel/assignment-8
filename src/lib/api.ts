@@ -1,5 +1,3 @@
-import { API_URL } from "@/lib/constants";
-
 const TOKEN_STORAGE_KEY = "booknook_api_token";
 
 interface StoredToken {
@@ -184,10 +182,11 @@ async function parseError(response: Response): Promise<string> {
 }
 
 function buildApiUrl(path: string): string {
-  const base = API_URL.replace(/\/+$/, "");
   const endpoint = path.startsWith("/") ? path : `/${path}`;
 
-  return `${base}${endpoint}`;
+  // All production API endpoints are implemented as Next.js route handlers.
+  // A same-origin URL works on localhost, Vercel production, and previews.
+  return `/api${endpoint}`;
 }
 
 async function parseResponse<T>(response: Response): Promise<T> {
